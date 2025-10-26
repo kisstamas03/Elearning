@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Új kurzus létrehozása - E-Learning Platform</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2563eb;
+    }
+
+    .create-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+      color: white;
+      padding: 60px 0;
+    }
+
+    .form-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 12px 24px;
+    }
+
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
+    .form-floating {
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body class="bg-light">
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/" style="color: var(--primary-color);">
+      <i class="fas fa-graduation-cap me-2"></i>E-Learning Platform
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Főoldal</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/courses">Kurzusok</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user me-1"></i>
+            <span sec:authentication="name">Felhasználó</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/profile">Profil</a></li>
+            <li><a class="dropdown-item" href="/courses/create">Új kurzus</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form th:action="@{/logout}" method="post" class="d-inline">
+                <button type="submit" class="dropdown-item">Kijelentkezés</button>
+              </form>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<div class="create-header">
+  <div class="container">
+    <h1 class="fw-bold mb-3"><i class="fas fa-plus-circle me-3"></i>Új kurzus létrehozása</h1>
+    <p class="lead">Hozz létre egy új kurzust és oszd meg tudásodat másokkal</p>
+  </div>
+</div>
+
+<!-- Create Course Form -->
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card form-card">
+        <div class="card-body p-4">
+          <div th:if="${error}" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${error}">Hiba üzenet</span>
+          </div>
+
+          <form th:action="@{/courses/create}" method="post" th:object="${course}">
+            <div class="mb-4">
+              <h5 class="fw-bold mb-3">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                Alapvető információk
+              </h5>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="title" th:field="*{title}"
+                       placeholder="Kurzus címe" required maxlength="100">
+                <label for="title">
+                  <i class="fas fa-heading me-2"></i>Kurzus címe *
+                </label>
+                <div class="form-text">Add meg a kurzus rövid, beszédes címét (max. 100 karakter)</div>
+              </div>
+
+              <div class="form-floating mb-3">
+                                <textarea class="form-control" id="description" th:field="*{description}"
+                                          placeholder="Kurzus leírása" style="height: 150px"
+                                          maxlength="500" required></textarea>
+                <label for="description">
+                  <i class="fas fa-align-left me-2"></i>Kurzus leírása *
+                </label>
+                <div class="form-text">Rövid leírás a kurzusról: mit tanulnak a hallgatók? (max. 500 karakter)</div>
+              </div>
+            </div>
+
+            <div class="alert alert-info">
+              <i class="fas fa-lightbulb me-2"></i>
+              <strong>Tipp:</strong> A kurzus létrehozása után hozzáadhatsz leckéket és anyagokat a kurzus részletek oldalán.
+            </div>
+
+            <div class="d-flex gap-2 justify-content-end mt-4">
+              <a href="/courses" class="btn btn-outline-secondary">
+                <i class="fas fa-times me-2"></i>Mégse
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Kurzus létrehozása
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Help Card -->
+      <div class="card mt-4 border-0 bg-light">
+        <div class="card-body">
+          <h6 class="fw-bold mb-3">
+            <i class="fas fa-question-circle text-primary me-2"></i>
+            Hogyan hozz létre hatékony kurzust?
+          </h6>
+          <ul class="mb-0">
+            <li class="mb-2">
+              <strong>Válassz egyértelmű címet:</strong> A cím legyen rövid és kifejező, hogy a hallgatók azonnal értsék, miről szól a kurzus.
+            </li>
+            <li class="mb-2">
+              <strong>Írj részletes leírást:</strong> Magyarázd el, mit tanulnak a hallgatók, milyen előismeretekre van szükség, és mit érnek el a kurzus végén.
+            </li>
+            <li class="mb-2">
+              <strong>Strukturáld a tananyagot:</strong> A kurzus létrehozása után adj hozzá leckéket logikus sorrendben.
+            </li>
+            <li>
+              <strong>Legyél következetes:</strong> Frissítsd rendszeresen a kurzust új tartalommal.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-4 mt-5">
+  <div class="container">
+    <div class="text-center text-muted">
+      <small>&copy; 2024 E-Learning Platform. Minden jog fenntartva.</small>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Karakter számláló a description mezőhöz
+  document.getElementById('description').addEventListener('input', function() {
+    const maxLength = 500;
+    const currentLength = this.value.length;
+    const remaining = maxLength - currentLength;
+
+    let helpText = this.nextElementSibling.nextElementSibling;
+    if (remaining < 100) {
+      helpText.classList.add('text-warning');
+      helpText.textContent = `Még ${remaining} karakter használható`;
+    } else {
+      helpText.classList.remove('text-warning');
+      helpText.textContent = 'Rövid leírás a kurzusról: mit tanulnak a hallgatók? (max. 500 karakter)';
+    }
+  });
+</script>
+</body>
+</html>

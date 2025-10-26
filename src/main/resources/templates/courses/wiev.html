@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${course.title} + ' - E-Learning Platform'">Kurzus - E-Learning Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+        }
+
+        .course-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            color: white;
+            padding: 60px 0;
+        }
+
+        .lesson-item {
+            border-left: 3px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .lesson-item:hover {
+            background: #e9ecef;
+            padding-left: 20px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .info-box {
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            background: #f8f9fa;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/" style="color: var(--primary-color);">
+            <i class="fas fa-graduation-cap me-2"></i>E-Learning Platform
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Főoldal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/courses">Kurzusok</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <div sec:authorize="isAuthenticated()">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>
+                            <span sec:authentication="name">Felhasználó</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile">Profil</a></li>
+                            <li sec:authorize="hasRole('INSTRUCTOR')">
+                                <a class="dropdown-item" href="/courses/create">Új kurzus</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">Kijelentkezés</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Bejelentkezés</a>
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Course Header -->
+<div class="course-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h1 class="fw-bold mb-3" th:text="${course.title}">Kurzus címe</h1>
+                <p class="lead mb-4" th:text="${course.description}">Kurzus leírása</p>
+                <div class="d-flex gap-4 mb-3 flex-wrap">
+                    <div>
+                        <i class="fas fa-user me-2"></i>
+                        <span th:text="${course.instructor.firstName + ' ' + course.instructor.lastName}">Oktató</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-users me-2"></i>
+                        <span th:text="${course.enrolledUsers.size()} + ' beiratkozott diák'">0 diák</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-book me-2"></i>
+                        <span th:text="${course.lessons.size()} + ' lecke'">0 lecke</span>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <form th:action="@{/courses/{id}/enroll(id=${course.id})}" method="post" th:if="${!isEnrolled}">
+                        <button type="submit" class="btn btn-light btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Beiratkozás a kurzusra
+                        </button>
+                    </form>
+                    <div th:if="${isEnrolled}" class="alert alert-success d-inline-block">
+                        <i class="fas fa-check-circle me-2"></i>Beiratkozva erre a kurzusra
+                    </div>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <a href="/login" class="btn btn-light btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>Jelentkezz be a beiratkozáshoz
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Content -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h3 class="fw-bold mb-4">Kurzus tartalma</h3>
+            <div th:if="${course.lessons != null and not course.lessons.empty}">
+                <div class="lesson-item" th:each="lesson : ${course.lessons}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-primary me-2" th:text="'Lecke ' + ${lesson.orderIndex}">1</span>
+                                <h5 class="mb-0" th:text="${lesson.title}">Lecke címe</h5>
+                            </div>
+                            <p class="text-muted mb-0" th:text="${lesson.content}">Lecke tartalma</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${course.lessons == null or course.lessons.empty}" class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>Még nincsenek leckék ehhez a kurzushoz.
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">Kurzus információk</h5>
+
+                    <div class="info-box">
+                        <h6><i class="fas fa-chalkboard-teacher text-primary me-2"></i>Oktató</h6>
+                        <p class="mb-0" th:text="${course.instructor.firstName + ' ' + course.instructor.lastName}">Oktató neve</p>
+                        <small class="text-muted" th:text="${course.instructor.email}">email@example.com</small>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><i class="fas fa-calendar text-primary me-2"></i>Létrehozva</h6>
+                        <p class="mb-0" th:text="${#temporals.format(course.createdAt, 'yyyy.MM.dd HH:mm')}">2024.01.01</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><i class="fas fa-users text-primary me-2"></i>Beiratkozott hallgatók</h6>
+                        <p class="mb-0" th:text="${course.enrolledUsers.size()} + ' fő'">0 fő</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h6><i class="fas fa-book-open text-primary me-2"></i>Leckék száma</h6>
+                        <p class="mb-0" th:text="${course.lessons.size()} + ' db'">0 db</p>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="/courses" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Vissza a kurzusokhoz
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-4 mt-5">
+    <div class="container">
+        <div class="text-center text-muted">
+            <small>&copy; 2024 E-Learning Platform. Minden jog fenntartva.</small>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
