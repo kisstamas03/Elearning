@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saját kurzusaim - E-Learning Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+        }
+
+        body {
+            background-color: #f8fafc;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        .course-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .progress-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-color) 0deg, #e5e7eb 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-circle-inner {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .nav-tabs .nav-link {
+            color: #64748b;
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-graduation-cap me-2"></i>
+            E-Learning Platform
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Főoldal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/courses">Kurzusok</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <div sec:authorize="isAuthenticated()">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>
+                            <span sec:authentication="name">Felhasználó</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item active" href="/my-courses"><i class="fas fa-book me-2"></i>Kurzusaim</a></li>
+                            <li sec:authorize="hasRole('INSTRUCTOR')">
+                                <a class="dropdown-item" href="/courses/create"><i class="fas fa-plus me-2"></i>Új kurzus</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Kijelentkezés
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <h1 class="display-4 fw-bold">
+            <i class="fas fa-book me-3"></i>Saját kurzusaim
+        </h1>
+        <p class="lead">Folytasd tanulásod ott, ahol abbahagytad</p>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="container mb-5">
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#enrolled" type="button">
+                <i class="fas fa-book-open me-2"></i>Beiratkozott kurzusok
+            </button>
+        </li>
+        <li class="nav-item" role="presentation" sec:authorize="hasRole('INSTRUCTOR')">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#teaching" type="button">
+                <i class="fas fa-chalkboard-teacher me-2"></i>Tanított kurzusok
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#completed" type="button">
+                <i class="fas fa-check-circle me-2"></i>Befejezett kurzusok
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Enrolled Courses -->
+        <div class="tab-pane fade show active" id="enrolled" role="tabpanel">
+            <div class="row g-4">
+                <!-- Sample Course Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge bg-primary">Programozás</span>
+                                <div class="progress-circle" style="background: conic-gradient(var(--primary-color) 216deg, #e5e7eb 216deg);">
+                                    <div class="progress-circle-inner">
+                                        <small>60%</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h5 class="card-title fw-bold mb-2">Java Programozás Alapjai</h5>
+                            <p class="text-muted small mb-3">Teszt Oktató</p>
+
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" style="width: 60%"></div>
+                            </div>
+
+                            <div class="d-flex justify-content-between text-muted small mb-3">
+                                <span>3/5 lecke</span>
+                                <span>2 óra hátra</span>
+                            </div>
+
+                            <a href="/courses/1" class="btn btn-primary w-100">
+                                <i class="fas fa-play me-2"></i>Folytatás
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="col-12 text-center py-5" style="display: none;">
+                    <i class="fas fa-inbox fs-1 text-muted mb-3"></i>
+                    <h4 class="text-muted">Még nincs beiratkozott kurzusod</h4>
+                    <p class="text-muted">Fedezd fel a kurzuskínálatunkat és kezdj el tanulni!</p>
+                    <a href="/courses" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Kurzusok böngészése
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teaching Courses -->
+        <div class="tab-pane fade" id="teaching" role="tabpanel">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card course-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge bg-success">Aktív</span>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Szerkesztés</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-chart-bar me-2"></i>Statisztikák</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i>Törlés</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <h5 class="card-title fw-bold mb-2">Java Programozás Alapjai</h5>
+
+                            <div class="row text-center mb-3">
+                                <div class="col-4">
+                                    <div class="fw-bold text-primary">45</div>
+                                    <small class="text-muted">Diák</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="fw-bold text-primary">5</div>
+                                    <small class="text-muted">Lecke</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="fw-bold text-primary">4.5</div>
+                                    <small class="text-muted">Értékelés</small>
+                                </div>
+                            </div>
+
+                            <a href="/courses/1/manage" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-cog me-2"></i>Kezelés
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Courses -->
+        <div class="tab-pane fade" id="completed" role="tabpanel">
+            <div class="row g-4">
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-trophy fs-1 text-warning mb-3"></i>
+                    <h4 class="text-muted">Még nincs befejezett kurzusod</h4>
+                    <p class="text-muted">Teljesítsd az első kurzusod és szerezd meg a tanúsítványt!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5><i class="fas fa-graduation-cap me-2"></i>E-Learning Platform</h5>
+                <p class="text-muted">Modern online tanulási platform mindenkinek.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h6>Gyors linkek</h6>
+                <ul class="list-unstyled">
+                    <li><a href="/courses" class="text-muted text-decoration-none">Kurzusok</a></li>
+                    <li><a href="/about" class="text-muted text-decoration-none">Rólunk</a></li>
+                    <li><a href="/contact" class="text-muted text-decoration-none">Kapcsolat</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h6>Kapcsolat</h6>
+                <p class="text-muted">
+                    <i class="fas fa-envelope me-2"></i>info@elearning.hu<br>
+                    <i class="fas fa-phone me-2"></i>+36 1 234 5678
+                </p>
+            </div>
+        </div>
+        <hr class="text-muted">
+        <div class="text-center text-muted">
+            <small>&copy; 2024 E-Learning Platform. Minden jog fenntartva.</small>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

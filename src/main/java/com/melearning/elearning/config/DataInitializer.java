@@ -32,7 +32,7 @@ public class DataInitializer implements CommandLineRunner {
         // Ellenőrizzük, hogy már vannak-e felhasználók az adatbázisban
         if (userRepository.count() == 0) {
             initializeUsers();
-            initializeCourses();
+            //initializeCourses();
         }
     }
 
@@ -95,6 +95,7 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("=====================================");
     }
 
+    /*
     private void initializeCourses() {
         // Oktatók lekérése
         User instructor1 = userRepository.findByUsername("instructor").orElse(null);
@@ -184,7 +185,7 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("Összesen " + courseRepository.count() + " kurzus lett létrehozva");
         System.out.println("Összesen " + lessonRepository.count() + " lecke lett létrehozva");
         System.out.println("==================================");
-    }
+    }*/
 
     private void createLesson(Course course, String title, String content, int order) {
         Lesson lesson = new Lesson();

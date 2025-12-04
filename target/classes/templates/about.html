@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rólunk - E-Learning Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+        }
+
+        body {
+            background-color: #f8fafc;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            color: white;
+            padding: 100px 0;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            height: 100%;
+            text-align: center;
+        }
+
+        .feature-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .team-card {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .team-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            margin: 0 auto 20px;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-graduation-cap me-2"></i>
+            E-Learning Platform
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Főoldal</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/courses">Kurzusok</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/about">Rólunk</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <div sec:authorize="isAuthenticated()">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>
+                            <span sec:authentication="name">Felhasználó</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="/my-courses"><i class="fas fa-book me-2"></i>Kurzusaim</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Kijelentkezés
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </div>
+
+                <div sec:authorize="isAnonymous()">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Bejelentkezés</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-2" href="/register">Regisztráció</a>
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Rólunk</h1>
+                <p class="lead">Küldetésünk, hogy mindenki számára elérhetővé tegyük a magas színvonalú online oktatást.</p>
+            </div>
+            <div class="col-lg-6">
+                <i class="fas fa-users" style="font-size: 200px; opacity: 0.1;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="fw-bold mb-4">Küldetésünk</h2>
+                <p class="lead text-muted">
+                    Az E-Learning Platform célja, hogy forradalmasítsa az online oktatást.
+                    Hiszünk abban, hogy a tudás mindenkié kell legyen, függetlenül attól,
+                    hogy hol él vagy milyen a háttere. Modern technológiánkkal és elkötelezett
+                    oktatóinkkal segítünk elérni céljaidat.
+                </p>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h4 class="fw-bold mb-3">Minőségi oktatás</h4>
+                    <p class="text-muted">Szakértő oktatók által készített kurzusok a legújabb ismeretekkel.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-users"></i>
+                    <h4 class="fw-bold mb-3">Közösség</h4>
+                    <p class="text-muted">Csatlakozz tanulók ezreihez világszerte és tanulj együtt velük.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <i class="fas fa-certificate"></i>
+                    <h4 class="fw-bold mb-3">Tanúsítványok</h4>
+                    <p class="text-muted">Szerezz elismerést befejezett kurzusaidért.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="fw-bold mb-3">Csapatunk</h2>
+                <p class="lead text-muted">Ismerj meg minket, akik mindennap dolgozunk azért, hogy a legjobb élményt nyújtsuk</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5 class="fw-bold">Kovács János</h5>
+                    <p class="text-muted mb-3">CEO & Alapító</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5 class="fw-bold">Nagy Anna</h5>
+                    <p class="text-muted mb-3">Oktatási igazgató</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5 class="fw-bold">Tóth Péter</h5>
+                    <p class="text-muted mb-3">Technológiai vezető</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="team-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5 class="fw-bold">Kiss Éva</h5>
+                    <p class="text-muted mb-3">Marketing vezető</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-outline-primary rounded-circle">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="fw-bold mb-4">Csatlakozz hozzánk!</h2>
+                <p class="lead text-muted mb-4">
+                    Kezdd el tanulni még ma és légy részese egy globális tanulói közösségnek.
+                </p>
+                <a href="/register" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Regisztráció
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5><i class="fas fa-graduation-cap me-2"></i>E-Learning Platform</h5>
+                <p class="text-muted">Modern online tanulási platform mindenkinek.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h6>Gyors linkek</h6>
+                <ul class="list-unstyled">
+                    <li><a href="/courses" class="text-muted text-decoration-none">Kurzusok</a></li>
+                    <li><a href="/about" class="text-muted text-decoration-none">Rólunk</a></li>
+                    <li><a href="/contact" class="text-muted text-decoration-none">Kapcsolat</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h6>Kapcsolat</h6>
+                <p class="text-muted">
+                    <i class="fas fa-envelope me-2"></i>info@elearning.hu<br>
+                    <i class="fas fa-phone me-2"></i>+36 1 234 5678
+                </p>
+            </div>
+        </div>
+        <hr class="text-muted">
+        <div class="text-center text-muted">
+            <small>&copy; 2024 E-Learning Platform. Minden jog fenntartva.</small>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

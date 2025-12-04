@@ -19,6 +19,10 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
+    public List<Course> getPublicCourses() {
+        return courseRepository.findByIsPublicTrue();
+    }
+
     public Optional<Course> getCourseById(Long id) {
         return courseRepository.findById(id);
     }
