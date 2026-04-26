@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "lessons")
@@ -25,6 +27,10 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    // --- ÚJ MEZŐ: A leckéhez csatolt prezentációk ---
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
+    private List<Presentation> presentations = new ArrayList<>();
 
     private LocalDateTime createdAt;
 
@@ -56,6 +62,9 @@ public class Lesson {
 
     public Course getCourse() { return course; }
     public void setCourse(Course course) { this.course = course; }
+
+    public List<Presentation> getPresentations() { return presentations; }
+    public void setPresentations(List<Presentation> presentations) { this.presentations = presentations; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

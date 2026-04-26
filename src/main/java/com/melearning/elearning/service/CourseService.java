@@ -3,8 +3,10 @@ package com.melearning.elearning.service;
 import com.melearning.elearning.model.Course;
 import com.melearning.elearning.model.User;
 import com.melearning.elearning.repository.CourseRepository;
+import com.melearning.elearning.repository.PresentationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +17,15 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    private PresentationRepository presentationRepository;
+
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
+    }
+
+    public List<Course> getPublicCourses() {
+        return courseRepository.findByIsPublicTrue();
     }
 
     public Optional<Course> getCourseById(Long id) {
@@ -35,7 +44,12 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
+    @Transactional
     public void deleteCourse(Long id) {
+        courseRepository.findById(id).ifPresent(course -> {
+            presentationRepository.deleteByCourse(course);
+        });
+
         courseRepository.deleteById(id);
     }
 

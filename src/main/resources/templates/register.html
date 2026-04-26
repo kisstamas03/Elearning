@@ -1,179 +1,177 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regisztráció - E-Learning Platform</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2563eb;
-        }
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regisztráció – ME-Learning</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #3B6FE8; --primary-dark: #2952C8; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; display: flex; background: #0D1321; }
+    .auth-left {
+      flex: 0 0 420px; background: linear-gradient(160deg, #0D1321 0%, #1B2A4A 100%);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 60px 48px; position: relative; overflow: hidden;
+    }
+    .auth-left::before {
+      content: ''; position: absolute; top: -100px; right: -60px;
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(59,111,232,0.18) 0%, transparent 70%);
+    }
+    .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 48px; position: relative; }
+    .logo .li { width: 38px; height: 38px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
+    .logo .lt { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; color: white; }
+    .auth-left h2 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 28px; color: white; margin-bottom: 12px; letter-spacing: -0.5px; position: relative; }
+    .auth-left p { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.65; margin-bottom: 36px; position: relative; }
+    .role-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; position: relative; }
+    .role-card .rc-title { font-weight: 700; font-size: 14px; color: white; margin-bottom: 3px; }
+    .role-card .rc-desc { font-size: 12px; color: rgba(255,255,255,0.4); }
+    .role-card .rc-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 18px; }
 
-        body {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 20px 0;
-        }
+    .auth-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; background: #F0F4FF; overflow-y: auto; }
+    .auth-card { background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 460px; box-shadow: 0 8px 40px rgba(0,0,0,0.08); border: 1px solid #E5E9F2; }
+    .auth-card h3 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 22px; margin-bottom: 4px; color: #111827; }
+    .auth-card .sub { font-size: 13px; color: #9CA3AF; margin-bottom: 24px; }
+    .form-label { font-weight: 600; font-size: 12.5px; margin-bottom: 5px; color: #374151; }
+    .form-control, .form-select { border: 1.5px solid #E5E9F2; border-radius: 10px; font-size: 13.5px; font-family: 'Plus Jakarta Sans', sans-serif; padding: 10px 13px; background: #FAFBFF; }
+    .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,111,232,0.12); background: white; outline: none; }
+    .btn-submit { width: 100%; background: var(--primary); color: white; border: none; padding: 13px; border-radius: 11px; font-size: 14px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+    .btn-submit:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,111,232,0.3); }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: #D1D5DB; font-size: 12px; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #E5E9F2; }
+    .btn-login-link { display: block; text-align: center; background: #F0F4FF; color: var(--primary); border: 1.5px solid #D1DCFB; padding: 11px; border-radius: 11px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.15s; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .btn-login-link:hover { background: #E5EDFF; color: var(--primary-dark); }
+    .alert { border-radius: 10px; font-size: 13px; padding: 10px 14px; margin-bottom: 14px; }
+    .alert-danger { background: #FFF1F2; color: #9F1239; border: 1px solid #FECDD3; }
+    .alert-success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+    .back-link { text-align: center; margin-top: 20px; }
+    .back-link a { font-size: 13px; color: #9CA3AF; text-decoration: none; }
+    .back-link a:hover { color: #4B5563; }
+    .form-check-input:checked { background-color: var(--primary); border-color: var(--primary); }
+    .section-sep { font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.08em; margin: 18px 0 14px; padding-bottom: 8px; border-bottom: 1px solid #F3F4F6; }
 
-        .register-card {
-            max-width: 500px;
-            margin: 0 auto;
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .register-header {
-            text-align: center;
-            padding: 2rem 2rem 1rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .register-header i {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .form-floating {
-            margin-bottom: 1rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            padding: 12px;
-            font-weight: 600;
-        }
-
-        .btn-primary:hover {
-            background-color: #1d4ed8;
-            border-color: #1d4ed8;
-        }
-
-        .btn-outline-primary {
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-outline-primary:hover {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-    </style>
+    @media (max-width: 991.98px) {
+      body {
+        flex-direction: column;
+      }
+      .auth-left {
+        flex: none;
+        width: 100%;
+        padding: 40px 20px;
+        align-items: center;
+        text-align: center;
+      }
+      .auth-left::before {
+        display: none;
+      }
+      .logo {
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      .auth-left h2 {
+        font-size: 26px;
+      }
+      .auth-left p {
+        font-size: 14px;
+        margin-bottom: 0;
+      }
+      .role-card {
+        display: none;
+      }
+      .auth-right {
+        padding: 30px 15px;
+        align-items: flex-start;
+      }
+      .auth-card {
+        padding: 30px 24px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card register-card">
-                <div class="register-header">
-                    <i class="fas fa-user-plus"></i>
-                    <h3 class="fw-bold text-dark">Regisztráció</h3>
-                    <p class="text-muted">Hozd létre új fiókodat</p>
-                </div>
 
-                <div class="card-body p-4">
-                    <div th:if="${error}" class="alert alert-danger" role="alert">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <span th:text="${error}">Hiba üzenet</span>
-                    </div>
+<div class="auth-left">
+  <div class="logo">
+    <div class="li"><i class="fas fa-graduation-cap"></i></div>
+    <span class="lt">ME-Learning</span>
+  </div>
+  <h2>Csatlakozz most!</h2>
+  <p>Hozd létre ingyenes fiókodat és kezdj el tanulni vagy oktatni még ma.</p>
+  <div class="role-card">
+    <div class="rc-icon"><i class="fas fa-user-graduate" style="color:#7FA8F8;"></i></div>
+    <div class="rc-title">Diák</div>
+    <div class="rc-desc">Kurzusok böngészése, beiratkozás, kvízek kitöltése</div>
+  </div>
+  <div class="role-card">
+    <div class="rc-icon"><i class="fas fa-chalkboard-teacher" style="color:#4ADE80;"></i></div>
+    <div class="rc-title">Oktató</div>
+    <div class="rc-desc">Kurzusok létrehozása, diákok kezelése, eredmények nyomon követése</div>
+  </div>
+</div>
 
-                    <div th:if="${success}" class="alert alert-success" role="alert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        <span th:text="${success}">Siker üzenet</span>
-                    </div>
+<div class="auth-right">
+  <div>
+    <div class="auth-card">
+      <h3>Regisztráció</h3>
+      <p class="sub">Töltsd ki az adataidat a fiók létrehozásához</p>
 
-                    <form th:action="@{/register}" method="post" th:object="${user}">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}"
-                                           placeholder="Keresztnév" required>
-                                    <label for="firstName">
-                                        <i class="fas fa-user me-2"></i>Keresztnév
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}"
-                                           placeholder="Vezetéknév" required>
-                                    <label for="lastName">
-                                        <i class="fas fa-user me-2"></i>Vezetéknév
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+      <div th:if="${error}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}"></span>
+      </div>
+      <div th:if="${success}" class="alert alert-success">
+        <i class="fas fa-check-circle me-2"></i><span th:text="${success}"></span>
+      </div>
 
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="username" th:field="*{username}"
-                                   placeholder="Felhasználónév" required>
-                            <label for="username">
-                                <i class="fas fa-at me-2"></i>Felhasználónév
-                            </label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="email" th:field="*{email}"
-                                   placeholder="Email cím" required>
-                            <label for="email">
-                                <i class="fas fa-envelope me-2"></i>Email cím
-                            </label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="password" th:field="*{password}"
-                                   placeholder="Jelszó" required minlength="6">
-                            <label for="password">
-                                <i class="fas fa-lock me-2"></i>Jelszó (min. 6 karakter)
-                            </label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <select class="form-select" id="role" th:field="*{role}" required>
-                                <option value="">Válassz szerepkört</option>
-                                <option value="STUDENT">Hallgató</option>
-                                <option value="INSTRUCTOR">Oktató</option>
-                            </select>
-                            <label for="role">
-                                <i class="fas fa-user-tag me-2"></i>Szerepkör
-                            </label>
-                        </div>
-
-                        <div class="form-check mb-3">
-                            <input type="checkbox" class="form-check-input" id="terms" required>
-                            <label class="form-check-label" for="terms">
-                                Elfogadom a felhasználási feltételeket
-                            </label>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 mb-3">
-                            <i class="fas fa-user-plus me-2"></i>Regisztráció
-                        </button>
-                    </form>
-
-                    <div class="text-center">
-                        <p class="text-muted mb-2">Már van fiókod?</p>
-                        <a href="/login" class="btn btn-outline-primary">
-                            <i class="fas fa-sign-in-alt me-2"></i>Bejelentkezés
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center mt-3">
-                <a href="/" class="text-white text-decoration-none">
-                    <i class="fas fa-arrow-left me-2"></i>Vissza a főoldalra
-                </a>
-            </div>
+      <form th:action="@{/register}" method="post" th:object="${user}">
+        <div class="section-sep">Személyes adatok</div>
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6 col-12">
+            <label class="form-label">Keresztnév</label>
+            <input type="text" class="form-control" th:field="*{firstName}" placeholder="Kovács" required>
+          </div>
+          <div class="col-sm-6 col-12">
+            <label class="form-label">Vezetéknév</label>
+            <input type="text" class="form-control" th:field="*{lastName}" placeholder="János" required>
+          </div>
         </div>
+
+        <div class="section-sep">Fiók adatok</div>
+        <div class="mb-3">
+          <label class="form-label">Felhasználónév</label>
+          <input type="text" class="form-control" th:field="*{username}" placeholder="kovacs.janos" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email cím</label>
+          <input type="email" class="form-control" th:field="*{email}" placeholder="email@example.com" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Jelszó <span style="color:#9CA3AF;font-weight:400;">(min. 6 karakter)</span></label>
+          <input type="password" class="form-control" th:field="*{password}" placeholder="••••••••" required minlength="6">
+        </div>
+        <div class="mb-4">
+          <label class="form-label">Szerepkör</label>
+          <select class="form-select" th:field="*{role}" required>
+            <option value="">Válassz szerepkört…</option>
+            <option value="STUDENT">Hallgató (tanuló)</option>
+            <option value="INSTRUCTOR">Oktató (kurzust hozhat létre)</option>
+          </select>
+        </div>
+        <div class="form-check mb-4">
+          <input type="checkbox" class="form-check-input" id="terms" required>
+          <label class="form-check-label" for="terms" style="font-size:13px;color:#6B7280;">
+            Elfogadom a <a href="#" style="color:var(--primary);">felhasználási feltételeket</a>
+          </label>
+        </div>
+        <button type="submit" class="btn-submit"><i class="fas fa-user-plus me-2"></i>Fiók létrehozása</button>
+      </form>
+
+      <div class="divider">már van fiókod?</div>
+      <a href="/login" class="btn-login-link"><i class="fas fa-sign-in-alt me-2"></i>Bejelentkezés</a>
     </div>
+    <div class="back-link"><a href="/"><i class="fas fa-arrow-left me-2"></i>Vissza a főoldalra</a></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

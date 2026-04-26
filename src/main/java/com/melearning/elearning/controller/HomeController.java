@@ -17,10 +17,4 @@ public class HomeController {
         model.addAttribute("courses", courseService.getAllCourses());
         return "index";
     }
-
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
 }

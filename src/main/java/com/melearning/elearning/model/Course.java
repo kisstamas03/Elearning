@@ -24,14 +24,19 @@ public class Course {
     @Size(max = 500)
     private String description;
 
+    private Boolean isPublic = true;
+
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     private User instructor;
 
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Lesson> lessons = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Quiz> quizzes = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -41,7 +46,6 @@ public class Course {
     )
     private Set<User> enrolledUsers = new HashSet<>();
 
-    // Konstruktorok
     public Course() {
         this.createdAt = LocalDateTime.now();
     }
@@ -53,7 +57,6 @@ public class Course {
         this.instructor = instructor;
     }
 
-    // Getterek és setterek
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -72,6 +75,12 @@ public class Course {
     public List<Lesson> getLessons() { return lessons; }
     public void setLessons(List<Lesson> lessons) { this.lessons = lessons; }
 
-    public Set<User> getEnrolledUsers() { return enrolledUsers; }
-    public void setEnrolledUsers(Set<User> enrolledUsers) { this.enrolledUsers = enrolledUsers; }
+    public Set<User> getEnrolledUsers() {return enrolledUsers;}
+    public void setEnrolledUsers(Set<User> enrolledUsers) {this.enrolledUsers = enrolledUsers;}
+
+    public Boolean getIsPublic() { return isPublic; }
+    public void setIsPublic(Boolean isPublic) { this.isPublic = isPublic; }
+
+    public List<Quiz> getQuizzes() { return quizzes; }
+    public void setQuizzes(List<Quiz> quizzes) { this.quizzes = quizzes; }
 }
